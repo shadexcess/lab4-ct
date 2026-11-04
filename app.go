@@ -8,7 +8,7 @@ import (
 )
 
 type RequestPayload struct {
-	Name string `json:"text"`
+	Text string `json:"text"`
 }
 
 func countWordsHandler(w http.ResponseWriter, r *http.Request) {
