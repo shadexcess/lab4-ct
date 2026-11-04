@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html"
-	"log"
 	"net/http"
-	"os"
 )
 
 type RequestPayload struct {
@@ -26,19 +24,11 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Fprintf(w, "Hello, %s!", html.EscapeString(d.Name))
+	fmt.Fprint(w, "Hello, ", html.EscapeString(d.Name), "!")
 }
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
+	port := "8080"
 	http.HandleFunc("/", helloHandler)
-
-	log.Printf("Server is starting on port %s...\n", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
-	}
+	_ = http.ListenAndServe(":"+port, nil)
 }
