@@ -3,32 +3,35 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"html"
 	"net/http"
+	"strings"
 )
 
 type RequestPayload struct {
-	Name string `json:"name"`
+	Name string `json:"text"`
 }
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
+func countWordsHandler(w http.ResponseWriter, r *http.Request) {
 	var d RequestPayload
 	_ = json.NewDecoder(r.Body).Decode(&d)
 
-	if d.Name == "" {
-		d.Name = r.URL.Query().Get("name")
+	if d.Text == "" {
+		d.Text = r.URL.Query().Get("text")
 	}
 
-	if d.Name == "" {
-		fmt.Fprint(w, "Hello, World!")
+	if d.Text == "" {
+		http.Error(w, "Attach text!", http.StatusBadRequest)
 		return
 	}
 
-	fmt.Fprint(w, "Hello, ", html.EscapeString(d.Name), "!")
+	words := strings.Fields(d.Text)
+	count := len(words)
+
+	fmt.Fprint(w, "Words number: ", count)
 }
 
 func main() {
 	port := "8080"
-	http.HandleFunc("/", helloHandler)
+	http.HandleFunc("/", countWordsHandler)
 	_ = http.ListenAndServe(":"+port, nil)
 }
